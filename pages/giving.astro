@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { site } from '../../site.config';
-
+import { site } from '../site.config';
 const hasOnlineGiving = site.giving.paymentLinkUrl && site.giving.paymentLinkUrl.length > 0;
 const hasBankInfo = site.giving.bankInfo.bankName && site.giving.bankInfo.accountNumber;
 ---

@@ -1,9 +1,7 @@
 import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-    output: 'static',
-    adapter: cloudflare(),
-    site: 'https://immanuel-laos-church.pages.dev',
+      output: 'static',
+      site: 'https://immanuel-laos-church.wmevangelize7.workers.dev',
 });

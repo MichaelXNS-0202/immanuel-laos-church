@@ -1,7 +1,9 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://immanuel-laos-church.example.com',
-  // Change "site" above to your real domain when you deploy.
+    output: 'static',
+    adapter: cloudflare(),
+    site: 'https://immanuel-laos-church.pages.dev',
 });

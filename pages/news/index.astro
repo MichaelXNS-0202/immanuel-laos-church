@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('news')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('lo-LA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title="ຂ່າວສານ" description="ຂ່າວສານ ແລະ ປະກາດຈາກໂບດ">
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">ຂ່າວສານ</span>
+      <span class="hr-accent"></span>
+      <h1>ຂ່າວສານ ແລະ ປະກາດ</h1>
+      <p style="max-width: 640px; color: var(--ink-soft); margin-bottom: 3rem;">
+        ຕິດຕາມຂ່າວສານລ່າສຸດ, ປະກາດ, ແລະ ເລື່ອງລາວຈາກຊີວິດຂອງໂບດພວກເຮົາ.
+      </p>
+
+      {posts.length === 0 ? (
+        <p>ຍັງບໍ່ມີຂ່າວສານເທື່ອ.</p>
+      ) : (
+        <div class="card-grid">
+          {posts.map((post) => (
+            <a href={`/news/${post.slug}`} class="card card-link">
+              <time datetime={post.data.date.toISOString()}>
+                {formatDate(post.data.date)}
+              </time>
+              <h3>{post.data.title}</h3>
+              {post.data.excerpt && <p>{post.data.excerpt}</p>}
+              <span class="read-more">ອ່ານຕໍ່ →</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .card-link { display: block; color: var(--ink); }
+  .card-link:hover { color: var(--ink); }
+  .read-more {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--accent-dark);
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+</style>

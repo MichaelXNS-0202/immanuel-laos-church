@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+---
+
+<BaseLayout title="ຖ່າຍທອດສົດ" description="ເຂົ້າຮ່ວມການນະມັດສະການສົດຈາກທາງໄກ">
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">ຖ່າຍທອດສົດ</span>
+      <span class="hr-accent"></span>
+      <h1>ຮ່ວມການນະມັດສະການຈາກທາງໄກ</h1>
+      <p style="max-width: 640px; color: var(--ink-soft); margin-bottom: 3rem;">
+        ບໍ່ສາມາດມາຮ່ວມໂບດໄດ້? ຮ່ວມການນະມັດສະການສົດກັບພວກເຮົາຜ່ານໜ້າຈໍ.
+      </p>
+
+      {site.social.livestreamEmbedUrl ? (
+        <div class="stream-wrap">
+          <iframe
+            src={site.social.livestreamEmbedUrl}
+            title="ການຖ່າຍທອດສົດ"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      ) : (
+        <div class="empty">
+          <p><strong>ຍັງບໍ່ມີການຖ່າຍທອດສົດຢູ່ໃນເວລານີ້.</strong></p>
+          <p style="color: var(--ink-soft); font-size: 0.95rem;">
+            ເພື່ອເປີດໃຊ້ງານການຖ່າຍທອດສົດ: ໃສ່ URL ຂອງ YouTube ຫຼື Facebook ໃສ່ໃນ <code>site.config.ts</code><br />
+            ທີ່ຟິລ <code>social.livestreamEmbedUrl</code>
+          </p>
+          <p style="font-size: 0.85rem; color: var(--muted); margin-top: 1rem;">
+            ຕົວຢ່າງ YouTube: <code>https://www.youtube.com/embed/live_stream?channel=UCxxxxxxxx</code>
+          </p>
+        </div>
+      )}
+
+      <div class="service-info">
+        <h2>ເວລານະມັດສະການ</h2>
+        <div class="service-times">
+          {site.services.map((s) => (
+            <div class="service-pill">
+              <strong>{s.day}</strong>
+              <span>{s.time}</span>
+              <small>{s.name}</small>
+            </div>
+          ))}
+        </div>
+
+        {(site.social.facebook || site.social.youtube) && (
+          <>
+            <p style="margin-top: 2rem; color: var(--ink-soft);">ຕິດຕາມພວກເຮົາທາງ:</p>
+            <div class="social-links">
+              {site.social.youtube && (
+                <a href={site.social.youtube} class="btn btn-outline" target="_blank" rel="noopener">YouTube</a>
+              )}
+              {site.social.facebook && (
+                <a href={site.social.facebook} class="btn btn-outline" target="_blank" rel="noopener">Facebook</a>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .stream-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 20px 50px -30px rgba(31, 42, 51, 0.4);
+  }
+  .stream-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .empty {
+    padding: 3rem 2rem;
+    background: var(--bg-alt);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .empty code {
+    background: var(--white);
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    border: 1px solid var(--line);
+  }
+
+  .service-info {
+    padding: 2.5rem;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+  }
+  .service-info h2 { margin-bottom: 1.5rem; }
+
+  .service-times {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .service-pill {
+    padding: 1.25rem;
+    background: var(--white);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+  }
+  .service-pill strong {
+    display: block;
+    color: var(--accent-dark);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .service-pill span {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+  .service-pill small {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .social-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+</style>

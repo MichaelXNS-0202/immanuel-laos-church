@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+
+const hasOnlineGiving = site.giving.paymentLinkUrl && site.giving.paymentLinkUrl.length > 0;
+const hasBankInfo = site.giving.bankInfo.bankName && site.giving.bankInfo.accountNumber;
+---
+
+<BaseLayout title="ການບໍລິຈາກ" description="ສະໜັບສະໜູນພັນທະກິດຂອງໂບດດ້ວຍການບໍລິຈາກ">
+  <section class="section">
+    <div class="container giving-wrap">
+      <span class="eyebrow">ການບໍລິຈາກ</span>
+      <span class="hr-accent"></span>
+      <h1>ສະໜັບສະໜູນພັນທະກິດ</h1>
+
+      <div class="verse">
+        <blockquote>
+          <p>“ໃຫ້ແຕ່ລະຄົນຖວາຍຕາມທີ່ໄດ້ຕັ້ງໃຈໄວ້ໃນໃຈ, ບໍ່ແມ່ນດ້ວຍຄວາມຝືນໃຈ ຫຼື ບັງຄັບ ເພາະພຣະເຈົ້າຊົງຮັກຜູ້ທີ່ຖວາຍດ້ວຍຄວາມຍິນດີ.”</p>
+          <cite>— 2 ໂກຣິນໂທ 9:7</cite>
+        </blockquote>
+      </div>
+
+      <p class="lead">
+        ຂອບໃຈທີ່ທ່ານຄິດຢາກສະໜັບສະໜູນພັນທະກິດຂອງ {site.name}. ການຖວາຍຂອງທ່ານຊ່ວຍໃຫ້ພວກເຮົາສາມາດ
+        ຮັບໃຊ້ຊຸມຊົນ, ແບ່ງປັນຂ່າວປະເສີດ, ແລະ ດູແລຄວາມຕ້ອງການຂອງຄອບຄົວໂບດ.
+      </p>
+
+      {hasOnlineGiving && (
+        <div class="giving-method">
+          <h2>ບໍລິຈາກອອນລາຍ</h2>
+          <p>ວິທີທີ່ງ່າຍ ແລະ ປອດໄພທີ່ສຸດ — ຄລິກປຸ່ມດ້ານລຸ່ມ:</p>
+          <a href={site.giving.paymentLinkUrl} class="btn giving-btn" target="_blank" rel="noopener">
+            ບໍລິຈາກດຽວນີ້ →
+          </a>
+        </div>
+      )}
+
+      {hasBankInfo && (
+        <div class="giving-method">
+          <h2>ໂອນຜ່ານທະນາຄານ</h2>
+          <dl class="bank-details">
+            <dt>ທະນາຄານ</dt>
+            <dd>{site.giving.bankInfo.bankName}</dd>
+            <dt>ຊື່ບັນຊີ</dt>
+            <dd>{site.giving.bankInfo.accountName}</dd>
+            <dt>ເລກບັນຊີ</dt>
+            <dd><code>{site.giving.bankInfo.accountNumber}</code></dd>
+          </dl>
+        </div>
+      )}
+
+      {!hasOnlineGiving && !hasBankInfo && (
+        <div class="empty">
+          <p><strong>ຍັງບໍ່ໄດ້ຕັ້ງຄ່າຂໍ້ມູນການບໍລິຈາກ.</strong></p>
+          <p style="color: var(--ink-soft); font-size: 0.95rem;">
+            ເພື່ອເປີດໃຊ້ງານການບໍລິຈາກ: ແກ້ໄຂ <code>site.config.ts</code><br />
+            ໃສ່ URL ຂອງ Stripe/PayPal ໃນ <code>giving.paymentLinkUrl</code><br />
+            ຫຼື ໃສ່ຂໍ້ມູນບັນຊີທະນາຄານໃນ <code>giving.bankInfo</code>
+          </p>
+        </div>
+      )}
+
+      <div class="giving-method">
+        <h2>ວິທີອື່ນ</h2>
+        <p>
+          ຫຼື ທ່ານສາມາດມອບການຖວາຍໃຫ້ທາງໂບດໂດຍກົງໃນວັນອາທິດ.
+          ຖ້າທ່ານມີຄຳຖາມໃດໆ, ກະລຸນາ <a href="/contact">ຕິດຕໍ່ພວກເຮົາ</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .giving-wrap { max-width: 720px; }
+
+  .verse {
+    margin: 2.5rem 0;
+    padding: 2rem 2.25rem;
+    background: var(--bg-alt);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+  }
+  .verse blockquote { margin: 0; }
+  .verse p {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--ink);
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+  .verse cite {
+    font-style: normal;
+    font-size: 0.9rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .lead {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .giving-method {
+    margin-bottom: 3rem;
+  }
+  .giving-method h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .giving-btn {
+    font-size: 1.05rem;
+    padding: 1em 2em;
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+  }
+  .giving-btn:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .bank-details {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem 1.5rem;
+    padding: 1.75rem;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .bank-details dt {
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 0.15rem;
+  }
+  .bank-details dd {
+    margin: 0;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .bank-details code {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .empty {
+    padding: 2rem;
+    background: var(--bg-alt);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .empty code {
+    background: var(--white);
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    border: 1px solid var(--line);
+  }
+</style>

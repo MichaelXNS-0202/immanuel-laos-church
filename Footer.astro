@@ -1,0 +1,135 @@
+---
+import { site, nav } from '../../site.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-about">
+      <h3>{site.name}</h3>
+      <p class="footer-tagline">{site.tagline}</p>
+      <p class="footer-contact">
+        <strong>ທີ່ຢູ່:</strong> {site.address.street}{site.address.city && `, ${site.address.city}`}, {site.address.country}<br />
+        <strong>ເບີໂທ:</strong> {site.phone}<br />
+        <strong>ອີເມວ:</strong> <a href={`mailto:${site.email}`}>{site.email}</a>
+      </p>
+    </div>
+
+    <div class="footer-nav">
+      <h4>ເມນູ</h4>
+      <ul>
+        {nav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="footer-services">
+      <h4>ເວລານະມັດສະການ</h4>
+      <ul class="service-list">
+        {site.services.map((s) => (
+          <li>
+            <span class="service-day">{s.day}</span>
+            <span class="service-time">{s.time}</span>
+            <span class="service-name">{s.name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <p>© {year} {site.nameEnglish}. ສະຫງວນລິຂະສິດ.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--bg);
+    margin-top: 4rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.2fr;
+    gap: 3rem;
+    padding: 4rem 1.25rem 3rem;
+  }
+
+  @media (max-width: 800px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  .site-footer h3 {
+    color: var(--bg);
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+  }
+  .site-footer h4 {
+    color: var(--bg);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    color: #D4C19B;
+  }
+
+  .footer-tagline {
+    color: #C9BDA2;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  .footer-contact { font-size: 0.92rem; color: #C9BDA2; line-height: 1.9; }
+  .footer-contact strong { color: var(--bg); font-weight: 500; }
+  .footer-contact a { color: #E8D4A5; }
+  .footer-contact a:hover { color: var(--bg); }
+
+  .footer-nav ul, .service-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .footer-nav li { margin-bottom: 0.55rem; }
+  .footer-nav a { color: #C9BDA2; font-size: 0.95rem; }
+  .footer-nav a:hover { color: var(--bg); }
+
+  .service-list li {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .service-list li:last-child { border-bottom: 0; }
+  .service-day {
+    display: block;
+    font-weight: 600;
+    color: #E8D4A5;
+    font-size: 0.9rem;
+  }
+  .service-time {
+    display: block;
+    font-size: 1.05rem;
+    color: var(--bg);
+    margin: 0.1rem 0;
+  }
+  .service-name {
+    display: block;
+    font-size: 0.85rem;
+    color: #C9BDA2;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 1.25rem 0;
+  }
+  .footer-bottom p {
+    margin: 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #A59881;
+  }
+</style>

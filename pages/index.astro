@@ -1,0 +1,227 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+import { getCollection } from 'astro:content';
+
+// Fetch latest 3 news posts and 3 upcoming events
+const allNews = await getCollection('news');
+const latestNews = allNews
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const allEvents = await getCollection('events');
+const now = new Date();
+const upcomingEvents = allEvents
+  .filter((e) => e.data.date >= now)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf())
+  .slice(0, 3);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('lo-LA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout>
+  {/* ---- HERO ---- */}
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">ຍິນດີຕ້ອນຮັບ</span>
+      <h1 class="hero-title">{site.name}</h1>
+      <p class="hero-tagline">{site.tagline}</p>
+      <div class="hero-ctas">
+        <a href="/livestream" class="btn">ຮ່ວມການນະມັດສະການ</a>
+        <a href="/sermons" class="btn btn-outline">ຟັງຄຳເທດສະໜາ</a>
+      </div>
+
+      <div class="hero-services">
+        {site.services.map((s) => (
+          <div class="service-card">
+            <div class="service-card-day">{s.day}</div>
+            <div class="service-card-time">{s.time}</div>
+            <div class="service-card-name">{s.name}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ---- ABOUT ---- */}
+  <section class="section section-alt">
+    <div class="container about-grid">
+      <div>
+        <span class="eyebrow">ກ່ຽວກັບພວກເຮົາ</span>
+        <span class="hr-accent"></span>
+        <h2>ຄຣິສຕະຈັກຂອງພຣະເຈົ້າ — ບ້ານຂອງພວກເຮົາທຸກຄົນ</h2>
+      </div>
+      <div class="about-body">
+        <p>
+          ພວກເຮົາແມ່ນຊຸມຊົນຜູ້ທີ່ເຊື່ອໃນພຣະເຢຊູຄຣິດ, ທີ່ປາຖະໜາຢາກຮັກພຣະເຈົ້າ, ຮັກເພື່ອນບ້ານ,
+          ແລະ ຮຽນຮູ້ພຣະຄຳຂອງພຣະອົງດ້ວຍກັນ.
+        </p>
+        <p>
+          ບໍ່ວ່າທ່ານຈະເປັນຜູ້ໃໝ່ ຫຼື ໄດ້ຕິດຕາມພຣະຄຣິດມາດົນແລ້ວ, ພວກເຮົາຍິນດີຕ້ອນຮັບທ່ານເຂົ້າສູ່ຄອບຄົວຂອງພວກເຮົາ.
+          ເຊີນມາຮ່ວມການນະມັດສະການກັບພວກເຮົາ.
+        </p>
+        <p>
+          <a href="/contact" class="btn btn-outline">ຕິດຕໍ່ພວກເຮົາ</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ---- LATEST NEWS ---- */}
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">ຂ່າວສານ</span>
+          <h2>ຂ່າວສານລ່າສຸດ</h2>
+        </div>
+        <a href="/news" class="section-link">ເບິ່ງທັງໝົດ →</a>
+      </div>
+
+      <div class="card-grid">
+        {latestNews.map((post) => (
+          <a href={`/news/${post.slug}`} class="card card-link">
+            <time datetime={post.data.date.toISOString()}>
+              {formatDate(post.data.date)}
+            </time>
+            <h3>{post.data.title}</h3>
+            {post.data.excerpt && <p>{post.data.excerpt}</p>}
+            <span class="read-more">ອ່ານຕໍ່ →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* ---- UPCOMING EVENTS ---- */}
+  {upcomingEvents.length > 0 && (
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">ເຫດການ</span>
+            <h2>ເຫດການໃກ້ໆນີ້</h2>
+          </div>
+          <a href="/events" class="section-link">ເບິ່ງທັງໝົດ →</a>
+        </div>
+
+        <div class="card-grid">
+          {upcomingEvents.map((ev) => (
+            <div class="card">
+              <time datetime={ev.data.date.toISOString()}>
+                {formatDate(ev.data.date)}
+              </time>
+              <h3>{ev.data.title}</h3>
+              {ev.data.location && <p><strong>ສະຖານທີ່:</strong> {ev.data.location}</p>}
+              {ev.data.excerpt && <p>{ev.data.excerpt}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: clamp(4rem, 9vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
+    background:
+      radial-gradient(ellipse at top right, rgba(169,124,58,0.08), transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(31,42,51,0.04), transparent 55%),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-inner { text-align: center; max-width: 820px; }
+  .hero-title {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    margin-bottom: 0.5rem;
+  }
+  .hero-tagline {
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: var(--ink-soft);
+    max-width: 640px;
+    margin: 0 auto 2rem;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 0.85rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+  }
+
+  .hero-services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .service-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+  }
+  .service-card-day {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .service-card-time {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+  }
+  .service-card-name {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+  .about-body p { color: var(--ink-soft); font-size: 1.05rem; }
+  @media (max-width: 820px) {
+    .about-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .section-head h2 { margin-bottom: 0; }
+  .section-link {
+    font-size: 0.95rem;
+    color: var(--accent-dark);
+    font-weight: 500;
+  }
+
+  .card-link {
+    display: block;
+    color: var(--ink);
+  }
+  .card-link:hover { color: var(--ink); }
+  .card-link .read-more {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--accent-dark);
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+</style>

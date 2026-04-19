@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async () => {
+  const sermons = await getCollection('sermons');
+  return sermons.map((sermon) => ({
+    params: { slug: sermon.slug },
+    props: { sermon },
+  }));
+}) satisfies GetStaticPaths;
+
+const { sermon } = Astro.props;
+const { Content } = await sermon.render();
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('lo-LA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title={sermon.data.title} description={sermon.data.excerpt}>
+  <article class="section">
+    <div class="container article-wrap">
+      <a href="/sermons" class="back-link">← ກັບໄປຄຳເທດສະໜາ</a>
+
+      <header class="article-head">
+        <span class="eyebrow">ຄຳເທດສະໜາ</span>
+        <h1>{sermon.data.title}</h1>
+        <div class="article-meta">
+          <time datetime={sermon.data.date.toISOString()}>
+            {formatDate(sermon.data.date)}
+          </time>
+          <span>· {sermon.data.preacher}</span>
+          {sermon.data.scripture && <span>· 📖 {sermon.data.scripture}</span>}
+        </div>
+      </header>
+
+      {sermon.data.youtubeId && (
+        <div class="video-wrap">
+          <iframe
+            src={`https://www.youtube.com/embed/${sermon.data.youtubeId}`}
+            title={sermon.data.title}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        </div>
+      )}
+
+      {sermon.data.audioUrl && (
+        <div class="audio-wrap">
+          <audio controls src={sermon.data.audioUrl}>
+            ຕົວທ່ອງເວັບຂອງທ່ານບໍ່ຮອງຮັບການຫຼິ້ນສຽງ.
+          </audio>
+        </div>
+      )}
+
+      <hr class="hairline" />
+
+      <div class="article-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-wrap { max-width: 760px; }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .back-link:hover { color: var(--ink); }
+
+  .article-head h1 { margin-bottom: 1rem; }
+  .article-meta {
+    font-size: 0.92rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .video-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .audio-wrap { margin-bottom: 2rem; }
+  .audio-wrap audio { width: 100%; }
+
+  .article-body { font-size: 1.08rem; line-height: 1.85; }
+  .article-body :global(h2) { margin-top: 2.5rem; font-size: 1.5rem; }
+  .article-body :global(blockquote) {
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem 1.25rem;
+    margin: 1.5rem 0;
+    color: var(--ink-soft);
+    font-style: italic;
+    background: var(--bg-alt);
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+</style>

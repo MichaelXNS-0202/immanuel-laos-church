@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('news');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('lo-LA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title={post.data.title} description={post.data.excerpt}>
+  <article class="section">
+    <div class="container article-wrap">
+      <a href="/news" class="back-link">← ກັບໄປຂ່າວສານ</a>
+
+      <header class="article-head">
+        <span class="eyebrow">ຂ່າວສານ</span>
+        <h1>{post.data.title}</h1>
+        <div class="article-meta">
+          <time datetime={post.data.date.toISOString()}>
+            {formatDate(post.data.date)}
+          </time>
+          {post.data.author && <span>· {post.data.author}</span>}
+        </div>
+      </header>
+
+      <hr class="hairline" />
+
+      <div class="article-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-wrap { max-width: 720px; }
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .back-link:hover { color: var(--ink); }
+
+  .article-head h1 { margin-bottom: 1rem; }
+  .article-meta {
+    font-size: 0.92rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .article-body {
+    font-size: 1.08rem;
+    line-height: 1.85;
+  }
+  .article-body :global(h2) {
+    margin-top: 2.5rem;
+    font-size: 1.5rem;
+  }
+  .article-body :global(h3) {
+    margin-top: 2rem;
+  }
+  .article-body :global(blockquote) {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .article-body :global(li) { margin-bottom: 0.5rem; }
+  .article-body :global(img) {
+    border-radius: var(--radius);
+    margin: 1.5rem 0;
+  }
+</style>

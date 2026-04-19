@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const sermons = (await getCollection('sermons')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString('lo-LA', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title="ຄຳເທດສະໜາ" description="ຄຳເທດສະໜາ ແລະ ບົດຮຽນຈາກພຣະຄຳພີ">
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">ຄຳເທດສະໜາ</span>
+      <span class="hr-accent"></span>
+      <h1>ຄຳເທດສະໜາ ແລະ ບົດຮຽນ</h1>
+      <p style="max-width: 640px; color: var(--ink-soft); margin-bottom: 3rem;">
+        ຟັງ, ເບິ່ງ, ຫຼື ອ່ານຄຳເທດສະໜາຂອງການນະມັດສະການປະຈຳອາທິດ.
+      </p>
+
+      {sermons.length === 0 ? (
+        <p>ຍັງບໍ່ມີຄຳເທດສະໜາເທື່ອ.</p>
+      ) : (
+        <div class="card-grid">
+          {sermons.map((sermon) => (
+            <a href={`/sermons/${sermon.slug}`} class="card card-link">
+              <time datetime={sermon.data.date.toISOString()}>
+                {formatDate(sermon.data.date)}
+              </time>
+              <h3>{sermon.data.title}</h3>
+              <p class="preacher">{sermon.data.preacher}</p>
+              {sermon.data.scripture && (
+                <p class="scripture">📖 {sermon.data.scripture}</p>
+              )}
+              {sermon.data.excerpt && <p>{sermon.data.excerpt}</p>}
+              <span class="read-more">ຟັງ / ເບິ່ງ →</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .card-link { display: block; color: var(--ink); }
+  .card-link:hover { color: var(--ink); }
+  .preacher {
+    font-size: 0.92rem;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .scripture {
+    font-size: 0.9rem;
+    color: var(--accent-dark);
+    margin-bottom: 0.75rem;
+  }
+  .read-more {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--accent-dark);
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+</style>

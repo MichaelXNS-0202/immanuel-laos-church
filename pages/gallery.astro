@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * To add photos: drop image files into /public/images/gallery/
+ * then add entries to this array. `alt` is used for accessibility.
+ * ວິທີເພີ່ມຮູບ: ວາງໄຟລ໌ຮູບໃສ່ໃນ /public/images/gallery/ ແລ້ວເພີ່ມລາຍການຢູ່ດ້ານລຸ່ມ.
+ */
+const photos: { src: string; alt: string; caption?: string }[] = [
+  // Example:
+  // { src: '/images/gallery/worship-1.jpg', alt: 'ການນະມັດສະການວັນອາທິດ', caption: 'ການນະມັດສະການວັນອາທິດ' },
+];
+---
+
+<BaseLayout title="ຄັງຮູບພາບ" description="ຮູບພາບຈາກກິດຈະກຳ ແລະ ການນະມັດສະການຂອງໂບດ">
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow">ຄັງຮູບພາບ</span>
+      <span class="hr-accent"></span>
+      <h1>ຮູບພາບຈາກໂບດ</h1>
+      <p style="max-width: 640px; color: var(--ink-soft); margin-bottom: 3rem;">
+        ຊ່ວງເວລາທີ່ໜ້າຈົດຈຳຈາກການນະມັດສະການ, ເຫດການ, ແລະ ຊຸມຊົນຂອງພວກເຮົາ.
+      </p>
+
+      {photos.length === 0 ? (
+        <div class="empty">
+          <p><strong>ຍັງບໍ່ມີຮູບພາບ.</strong></p>
+          <p style="color: var(--ink-soft); font-size: 0.95rem;">
+            ວາງໄຟລ໌ຮູບພາບໃສ່ໃນ <code>/public/images/gallery/</code><br />
+            ແລ້ວເພີ່ມລາຍການໃນຕົວແປ <code>photos</code> ໃນ <code>src/pages/gallery.astro</code>
+          </p>
+        </div>
+      ) : (
+        <div class="gallery">
+          {photos.map((photo) => (
+            <figure class="gallery-item">
+              <img src={photo.src} alt={photo.alt} loading="lazy" />
+              {photo.caption && <figcaption>{photo.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .empty {
+    padding: 3rem 2rem;
+    background: var(--bg-alt);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .empty code {
+    background: var(--white);
+    padding: 0.15em 0.4em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    border: 1px solid var(--line);
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+  .gallery-item {
+    margin: 0;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 250ms var(--ease);
+  }
+  .gallery-item:hover { transform: scale(1.015); }
+  .gallery-item img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .gallery-item figcaption {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+</style>

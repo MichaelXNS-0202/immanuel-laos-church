@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../../site.config';
+---
+
+<BaseLayout title="ຕິດຕໍ່" description="ຕິດຕໍ່ກັບໂບດຂອງພວກເຮົາ">
+  <section class="section">
+    <div class="container contact-grid">
+      <div class="contact-info">
+        <span class="eyebrow">ຕິດຕໍ່</span>
+        <span class="hr-accent"></span>
+        <h1>ພວກເຮົາຍິນດີຮັບຟັງທ່ານ</h1>
+        <p>
+          ມີຄຳຖາມ, ຄຳອະທິຖານ, ຫຼື ຢາກຮູ້ຈັກໂບດພວກເຮົາໃຫ້ຫຼາຍຂຶ້ນ?
+          ສົ່ງຂໍ້ຄວາມຫາພວກເຮົາ, ພວກເຮົາຈະຕອບກັບໃນໄວໆນີ້.
+        </p>
+
+        <dl class="contact-details">
+          <div>
+            <dt>ທີ່ຢູ່</dt>
+            <dd>
+              {site.address.street}<br />
+              {site.address.city && <>{site.address.city}<br /></>}
+              {site.address.country}
+            </dd>
+          </div>
+          <div>
+            <dt>ເບີໂທລະສັບ</dt>
+            <dd><a href={`tel:${site.phone}`}>{site.phone}</a></dd>
+          </div>
+          <div>
+            <dt>ອີເມວ</dt>
+            <dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+          </div>
+          <div>
+            <dt>ເວລານະມັດສະການ</dt>
+            <dd>
+              {site.services.map((s) => (
+                <div>{s.day} · {s.time}</div>
+              ))}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="contact-form-wrap">
+        <h2>ສົ່ງຂໍ້ຄວາມ</h2>
+        <!--
+          ======================================================================
+          FORM SETUP (IMPORTANT — ແນະນຳການຕັ້ງຄ່າ):
+          ======================================================================
+          This form does nothing by default. To make it actually send email,
+          sign up for a free service and paste your endpoint into action="".
+
+          Option 1: Formspree (https://formspree.io) — easiest, free 50/month.
+            Replace YOUR_FORM_ID below with the ID you get from Formspree.
+
+          Option 2: Netlify Forms — if hosting on Netlify, add data-netlify="true"
+            to the form tag. Netlify auto-detects and handles it.
+
+          Option 3: Web3Forms (https://web3forms.com) — free, simple.
+
+          ນີ້ແມ່ນຟອມຕົວຢ່າງ. ເພື່ອໃຫ້ມັນສາມາດສົ່ງອີເມວໄດ້, ສະໝັກບໍລິການຟຣີ
+          ແລ້ວໃສ່ URL ທີ່ທ່ານໄດ້ຮັບມາໃສ່ໃນ action="..." ດ້ານລຸ່ມນີ້.
+          ======================================================================
+        -->
+        <form class="form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <label for="name">ຊື່</label>
+          <input type="text" id="name" name="name" required autocomplete="name" />
+
+          <label for="email">ອີເມວ</label>
+          <input type="email" id="email" name="email" required autocomplete="email" />
+
+          <label for="phone">ເບີໂທ (ຖ້າຢາກໃຫ້ພວກເຮົາໂທຫາ)</label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel" />
+
+          <label for="subject">ຫົວຂໍ້</label>
+          <input type="text" id="subject" name="subject" required />
+
+          <label for="message">ຂໍ້ຄວາມ</label>
+          <textarea id="message" name="message" rows="6" required></textarea>
+
+          <button type="submit" class="btn">ສົ່ງຂໍ້ຄວາມ</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+  }
+
+  .contact-info p {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 2rem;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+  }
+  .contact-details dt {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+  }
+  .contact-details dd {
+    margin: 0;
+    color: var(--ink);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .contact-form-wrap h2 { margin-bottom: 1.5rem; }
+</style>

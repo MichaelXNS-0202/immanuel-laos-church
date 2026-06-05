@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SELLER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
+
+enum PaymentStatus {
+  UNPAID
+  WAITING_CONFIRMATION
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum DeliveryStatus {
+  NOT_SHIPPED
+  PREPARING
+  HANDED_TO_DELIVERY
+  IN_TRANSIT
+  DELIVERED
+  FAILED_DELIVERY
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  BANK_TRANSFER
+  QR_PAYMENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          UserRole  @default(SELLER)
+  isVerified    Boolean   @default(false)
+  isSuspended   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  store         Store?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Store {
+  id                  String   @id @default(cuid())
+  name                String
+  slug                String   @unique
+  description         String?  @db.Text
+  logo                String?
+  banner              String?
+  phone               String?
+  whatsappNumber      String?
+  facebookUrl         String?
+  tiktokUrl           String?
+  address             String?
+  paymentInstructions String?  @db.Text
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  sellerId   String   @unique
+  seller     User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  products   Product[]
+  orders     Order[]
+  categories Category[]
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String
+  storeId   String
+  createdAt DateTime @default(now())
+
+  store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  products Product[]
+
+  @@unique([storeId, slug])
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String
+  description   String?  @db.Text
+  price         Float
+  salePrice     Float?
+  stockQuantity Int      @default(0)
+  images        String[]
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  storeId    String
+  categoryId String?
+
+  store      Store      @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  category   Category?  @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+
+  @@unique([storeId, slug])
+}
+
+model Order {
+  id              String         @id @default(cuid())
+  orderNumber     String         @unique
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  province        String?
+  district        String?
+  address         String?
+  deliveryNote    String?
+  orderNote       String?
+  subtotal        Float
+  deliveryFee     Float          @default(0)
+  total           Float
+  paymentMethod   PaymentMethod  @default(CASH_ON_DELIVERY)
+  orderStatus     OrderStatus    @default(PENDING)
+  paymentStatus   PaymentStatus  @default(UNPAID)
+  deliveryStatus  DeliveryStatus @default(NOT_SHIPPED)
+  trackingNumber  String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  storeId String
+  store   Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items   OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+  price     Float
+  productId String
+  orderId   String
+
+  product Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
